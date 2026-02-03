@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>גשר של מילים - מילות קישור</title>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+    
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("USa57nqXpe8fsDWtb"); 
+        })();
+        const SERVICE_ID = "service_wkr43mk";
+        const TEMPLATE_ID = "template_a8cn3jf";
+    </script>
+
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fdcb6e;
+            --bg-color: #f0f3f8;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, #f0f3f8 0%, #dcdde1 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 35px;
+            text-align: center;
+            border-top: 8px solid var(--primary);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #636e72;
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .cover-image {
+            max-width: 100%; 
+            max-height: 45vh; /* תופס כחצי מגובה המסך */
+            width: auto;
+            height: auto;
+            margin: 0 auto 20px auto;
+            display: block;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            object-fit: contain;
+        }
+
+        /* שדות קלט וכפתורים */
+        input[type="text"] {
+            font-size: 1.5rem;
+            padding: 12px 20px;
+            border: 2px solid #dfe6e9;
+            border-radius: 50px;
+            width: 60%;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Assistant', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 45px;
+            font-size: 1.6rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Fredoka', sans-serif;
+            box-shadow: 0 4px 0 #4834d4;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #4834d4;
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #4834d4;
+        }
+
+        /* אזור כפתורי שליטה */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        #prev-btn {
+            background-color: #b2bec3;
+            box-shadow: 0 4px 0 #636e72;
+        }
+        
+        #prev-btn:hover {
+            background-color: #95a5a6;
+            box-shadow: 0 6px 0 #636e72;
+        }
+
+        /* עיצוב המשפטים - מרווחים יותר */
+        #exercises-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+        }
+
+        .sentence-row {
+            background: #fff;
+            border: 2px solid #dfe6e9;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: right;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .sentence-row:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .sentence-text {
+            font-size: 1.8rem;
+            line-height: 2.2;
+            color: #2d3436;
+            margin-bottom: 20px;
+        }
+
+        /* אזור הגרירה (החור במשפט) */
+        .drop-zone {
+            display: inline-block;
+            min-width: 100px;
+            height: 45px;
+            border-bottom: 3px solid var(--primary);
+            background-color: #f1f2f6;
+            vertical-align: bottom;
+            margin: 0 8px;
+            text-align: center;
+            line-height: 45px;
+            font-weight: bold;
+            color: var(--primary);
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            padding: 0 10px;
+        }
+
+        .drop-zone.filled {
+            background-color: var(--accent);
+            border-bottom-color: #e1b12c;
+            color: #2d3436;
+            transform: scale(1.05);
+        }
+
+        .drop-zone.selected-target {
+            background-color: #ffeaa7;
+            border-bottom-width: 5px;
+        }
+
+        /* מחסן מילים */
+        .word-bank {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px dashed #dfe6e9;
+        }
+
+        .draggable-word {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 25px;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #4834d4;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .draggable-word:hover {
+            transform: translateY(-2px);
+        }
+
+        .draggable-word.selected {
+            background-color: var(--accent);
+            color: #2d3436;
+            box-shadow: 0 4px 0 #e1b12c;
+            transform: scale(1.1);
+        }
+
+        .draggable-word.used {
+            opacity: 0.4;
+            transform: scale(0.9);
+            box-shadow: none;
+            background-color: #b2bec3;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #dfe6e9;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.4s ease-in-out;
+        }
+
+        .hidden { display: none; }
+        
+        /* מסך סיום */
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            border: 6px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2d3436;
+            margin: 20px auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 600px) {
+            .sentence-text { font-size: 1.4rem; }
+            .draggable-word { font-size: 1.2rem; padding: 6px 15px; }
+            .drop-zone { min-width: 80px; }
+            .container { padding: 20px; }
+            .word-bank { justify-content: center; }
+            .controls { gap: 10px; }
+            .btn { padding: 10px 20px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- מסך פתיחה -->
+        <div id="start-screen">
+            <!-- התמונה שלך: 1.jpg -->
+            <!-- נוסף מנגנון גיבוי למקרה שהקובץ חסר בתצוגה המקדימה -->
+            <img src="1.jpg" 
+                 onerror="this.src='https://img.icons8.com/clouds/300/000000/puzzle.png'" 
+                 alt="גשר של מילים" class="cover-image">
+            
+            <h1>גֶּשֶׁר שֶׁל מִלִּים</h1>
+            <h2>הַשְׁלָמַת מִלּוֹת קִשּׁוּר בַּמִּשְׁפָּט</h2>
+            
+            <p style="font-size: 1.3rem; color: #666; margin: 20px 0;">
+                הִכְנִיסוּ אֶת שִׁמְכֶם וְהַתְחִילוּ לְחַבֵּר מִשְׁפָּטִים!
+            </p>
+
+            <input type="text" id="studentName" placeholder="שֵׁם הַתַּלְמִיד/ה" autocomplete="off">
+            <br>
+            <button class="btn" onclick="startGame()">הַתְחֵל מִשְׂחָק!</button>
+        </div>
+
+        <!-- מסך המשחק -->
+        <div id="game-screen" class="hidden">
+            <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+            
+            <div id="exercises-container">
+                <!-- כאן יכנסו צמדי המשפטים -->
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn" class="btn" onclick="prevPage()">➜ הַקּוֹדֵם</button>
+                <button class="btn" onclick="nextPage()">הַבָּא ⬅</button>
+            </div>
+        </div>
+
+        <!-- מסך סיום -->
+        <div id="end-screen" class="hidden">
+            <img src="https://img.icons8.com/color/96/000000/trophy.png" alt="גביע" style="width: 100px; margin-bottom: 20px;">
+            <h1>כָּל הַכָּבוֹד!</h1>
+            <p style="font-size: 1.6rem; color: #555;">סִיַּמְתָּ אֶת הַמְּשִׂימָה!</p>
+            
+            <div class="score-circle">
+                <span id="final-score">0</span>
+            </div>
+
+            <div id="sending-msg" style="color: #636e72; margin-top:20px; font-weight:bold; font-size: 1.2rem;">
+                ⏳ מְעַבֵּד נְתוּנִים וְשׁוֹלֵחַ דּוּ"חַ...
+            </div>
+            
+            <button class="btn" style="background-color: #b2bec3; margin-top: 30px;" onclick="location.reload()">הַתְחֵל מֵחָדָשׁ</button>
+        </div>
+    </div>
+
+    <script>
+        // מאגר המשפטים המלא (27 משפטים)
+        const allSentences = [
+            // דף 2
+            { text: "כְּשֶׁהַכֶּלֶב שֶׁלִי שָׂמֵחַ ___ אֲנִי שָׂמֵחַ.", options: ["אֲבָל", "כִּי", "כְּדֵי", "גַם"], correct: "גַם" },
+            { text: "הָלַכְתִי לִישׁוֹן מְאֻחָר ___ רָאִיתִי סֶרֶט מוֹתֵחַ.", options: ["עִם", "אֲבָל", "כִּי", "עַל"], correct: "כִּי" },
+            { text: "הֵנַחְתִי אֶת הַפֶּרַח שֶׁקָטַפְתִי ___ הַשֻּׁלְחָן.", options: ["עַל", "בְּתוֹךְ", "אֲבָל", "כִּי"], correct: "עַל" },
+            // דף 3
+            { text: "נִירָה רָצְתָה לְצַלֵם אֶת הֶחָתוּל ___ הוּא בָּרַח.", options: ["גַם", "אֲבָל", "כִּי", "לָכֵן"], correct: "אֲבָל" },
+            { text: "יוֹאָב לֹא עָנָה עַל הַשְּׁאֵלוֹת ___ הָיָה לוֹ קָשֶׁה.", options: ["כִּי", "עִם", "אֲבָל", "בְּתוֹךְ"], correct: "כִּי" },
+            { text: "שִׂחַקְתִי ___ יָרוֹן חֲבֵרִי הַטּוֹב בְּתוֹפֶסֶת.", options: ["לְיַד", "בְּתוֹךְ", "עִם", "אֶל"], correct: "עִם" },
+            // דף 4
+            { text: "שָׁמַעְתִי בְּדִיחָה מַצְחִיקָה ___ צָחַקְתִי.", options: ["לָכֵן", "עִם", "בְּתוֹךְ", "גַם"], correct: "לָכֵן" },
+            { text: "סִפְרֵי הַקְּרִיאָה נִמְצָאִים ___ הַמַּדָּף.", options: ["עַל", "בְּתוֹךְ", "בִּגְלַל", "כִּי"], correct: "עַל" },
+            { text: "הַמּוֹרָה הִצִּיעָה לְמִיכַל לָשֶׁבֶת ___ מָאוֹר.", options: ["מִן", "אֶל", "לְיַד", "אֲבָל"], correct: "לְיַד" },
+            // דף 5
+            { text: "נוֹעָה סִדְּרָה ___ אֲרוֹן הַסְּפָרִים וּמָצְאָה מַחְבֶּרֶת.", options: ["לְיַד", "בְּתוֹךְ", "אֶת", "אֶל"], correct: "אֶת" },
+            { text: "לֹא נִקִּיתִי אֶת הֶחָצֵר ___ שֶׁיָּרַד גֶּשֶׁם.", options: ["בִּגְלַל", "לְיַד", "עִם", "גַם"], correct: "בִּגְלַל" },
+            { text: "לָקַחְתִי לְבֵית הַסֵּפֶר ___ הַקְּלָפִים שֶׁלִי.", options: ["לְיַד", "אֶת", "עִם", "אֲבָל"], correct: "אֶת" },
+            // דף 6
+            { text: "טַלִי מָצְאָה ___ הַמַּפְתְּחוֹת בְּתוֹךְ הַתִּיק.", options: ["לְיַד", "אֶת", "עִם", "אֶל"], correct: "אֶת" },
+            { text: "רָאִיתִי גּוּר קָטָן וְחָמוּד ___ הַבַּיִת שֶׁלִי.", options: ["שֶׁל", "לְיַד", "עַל", "עִם"], correct: "לְיַד" },
+            { text: "אֲנִי אֶהְיֶה בַּבַּיִת ___ תָּמָר עַד הָעֶרֶב.", options: ["כִּי", "אֶת", "שֶׁל", "אֲבָל"], correct: "שֶׁל" },
+            // דף 7
+            { text: "הֶחָתוּל הַקָּטָן רָאָה גְּבִינָה ___ הָעַכְבָּר הַגָּדוֹל.", options: ["לְיַד", "אֶת", "בִּגְלַל", "אֲבָל"], correct: "לְיַד" }, 
+            { text: "הֶחָתוּל נִבְהַל וְטִפֵּס מַהֵר ___ הַגָּדֵר.", options: ["כִּי", "בְּתוֹךְ", "אֲבָל", "עַל"], correct: "עַל" },
+            { text: "אַבָּא לָקַח סֻלָּם ___ לַעֲלוֹת אֶל הָעֵץ.", options: ["עִם", "אֶל", "כְּדֵי", "עַל"], correct: "כְּדֵי" },
+            // דף 8
+            { text: "קִלַּפְתִי בָּנָנָה וְזָרַקְתִי ___ הַקְּלִפָּה לַפַּח.", options: ["לְיַד", "אֶת", "שֶׁל", "לְתוֹךְ"], correct: "אֶת" },
+            { text: "הַשָּׁטִיחַ הֶחָדָשׁ מְגֻלְגָּל ___ הָאָרוֹן.", options: ["אֶת", "שֶׁל", "בְּתוֹךְ", "עִם"], correct: "בְּתוֹךְ" },
+            { text: "יָעֵל נוֹסַעַת בְּשַׁבָּת ___ סַבָּא וְסַבְתָּא.", options: ["שֶׁל", "אֶל", "כְּדֵי", "כִּי"], correct: "אֶל" },
+            // דף 9
+            { text: "רָצִיתִי לְשַׂחֵק עִם אֲחוֹתִי ___ הִיא חוֹלָה.", options: ["לְיַד", "אֶת", "שֶׁל", "אֲבָל"], correct: "אֲבָל" },
+            { text: "הַבְּגָדִים מְפֻזָּרִים ___ הָרִצְפָּה.", options: ["עַל", "אֶת", "שֶׁל", "אֵצֶל"], correct: "עַל" },
+            { text: "הַכֶּלֶב שֶׁלִי מִתְחַבֵּא ___ לַמִּטָּה.", options: ["עַל", "מִתַּחַת", "שֶׁל", "אֶת"], correct: "מִתַּחַת" },
+            // דף 10
+            { text: "רָאִינוּ נָחָשׁ בֵּין הַשִּׂיחִים וְ ___ בָּרַחְנוּ.", options: ["לְיַד", "אֶת", "לָכֵן", "גַם"], correct: "לָכֵן" },
+            { text: "הָעִפָּרוֹן אָבַד לִי ___ לֹא הֵכַנְתִּי אֶת הַשִּׁעוּרִים.", options: ["לָכֵן", "עִם", "בִּגְלַל שֶׁ", "גַם"], correct: "בִּגְלַל שֶׁ" }, 
+            { text: "כְּשֶׁאָחִי מְקַבֵּל חִבּוּק ___ אֲנִי רוֹצֶה חִבּוּק.", options: ["לָכֵן", "עִם", "בְּתוֹךְ", "גַם"], correct: "גַם" }
+        ];
+        
+        // תיקונים קטנים ידניים למאגר
+        allSentences[18].correct = "לְיַד"; 
+        allSentences[25].options = ["לָכֵן", "כִּי", "בְּתוֹךְ", "גַם"]; 
+        allSentences[25].correct = "כִּי"; 
+
+        // משתני מערכת
+        let currentPage = 0;
+        const itemsPerPage = 2; // 2 משפטים בכל דף
+        let studentName = "";
+        let userAnswers = []; // {sentence, selected, correct, isCorrect}
+        let selectedWordInfo = null; // לשמירת מילה שנבחרה בלחיצה
+
+        function startGame() {
+            const nameInput = document.getElementById("studentName");
+            if (nameInput.value.trim() === "") {
+                alert("נָא לִכְתּוֹב שֵׁם");
+                return;
+            }
+            studentName = nameInput.value;
+            document.getElementById("start-screen").classList.add("hidden");
+            document.getElementById("game-screen").classList.remove("hidden");
+            renderPage();
+        }
+
+        function renderPage() {
+            const container = document.getElementById("exercises-container");
+            container.innerHTML = "";
+            
+            // עדכון כפתור חזרה
+            const prevBtn = document.getElementById("prev-btn");
+            if (currentPage === 0) {
+                prevBtn.style.display = "none";
+            } else {
+                prevBtn.style.display = "block";
+            }
+
+            // עדכון סרגל התקדמות
+            const progress = (currentPage / Math.ceil(allSentences.length / itemsPerPage)) * 100;
+            document.getElementById("progress-fill").style.width = progress + "%";
+
+            const start = currentPage * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageSentences = allSentences.slice(start, end);
+
+            if (pageSentences.length === 0) {
+                endGame();
+                return;
+            }
+
+            pageSentences.forEach((q, index) => {
+                const globalIndex = start + index;
+                
+                // יצירת אזור המשפט
+                const row = document.createElement("div");
+                row.className = "sentence-row";
+                
+                const parts = q.text.split("___");
+                
+                row.innerHTML = `
+                    <div class="sentence-text">
+                        ${parts[0]}
+                        <div class="drop-zone" id="zone-${globalIndex}" 
+                             ondragover="allowDrop(event)" 
+                             ondrop="drop(event, ${globalIndex})"
+                             onclick="handleZoneClick(${globalIndex})">
+                             ___
+                        </div>
+                        ${parts[1] || ""}
+                    </div>
+                    <div class="word-bank" id="bank-${globalIndex}">
+                    </div>
+                `;
+                
+                container.appendChild(row);
+
+                // הוספת המילים למחסן
+                const bank = row.querySelector(`#bank-${globalIndex}`);
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                
+                shuffledOptions.forEach(word => {
+                    const wordBadge = document.createElement("div");
+                    wordBadge.className = "draggable-word";
+                    wordBadge.innerText = word;
+                    wordBadge.id = `word-${globalIndex}-${word}`;
+                    wordBadge.draggable = true;
+                    
+                    // תמיכה בגרירה
+                    wordBadge.ondragstart = (e) => drag(e, word, globalIndex);
+                    // תמיכה בלחיצה (למובייל)
+                    wordBadge.onclick = () => handleWordClick(word, globalIndex);
+                    
+                    bank.appendChild(wordBadge);
+                });
+            });
+        }
+
+        // --- לוגיקת משחק ---
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.target.classList.add("hovered");
+        }
+
+        function drag(ev, word, qIndex) {
+            ev.dataTransfer.setData("text", JSON.stringify({word, qIndex}));
+        }
+
+        function drop(ev, zoneIndex) {
+            ev.preventDefault();
+            ev.target.classList.remove("hovered");
+            try {
+                const data = JSON.parse(ev.dataTransfer.getData("text"));
+                if (data.qIndex === zoneIndex) {
+                    placeWord(data.word, zoneIndex);
+                }
+            } catch(e) {}
+        }
+
+        // לחיצה על מילה (מובייל/מחשב)
+        function handleWordClick(word, qIndex) {
+            // נקה סימון קודם
+            document.querySelectorAll(".draggable-word").forEach(el => el.classList.remove("selected"));
+            
+            const el = document.getElementById(`word-${qIndex}-${word}`);
+            if (!el.classList.contains("used")) {
+                el.classList.add("selected");
+                selectedWordInfo = { word, qIndex };
+            }
+        }
+
+        // לחיצה על יעד
+        function handleZoneClick(qIndex) {
+            if (selectedWordInfo && selectedWordInfo.qIndex === qIndex) {
+                placeWord(selectedWordInfo.word, qIndex);
+                
+                // איפוס בחירה
+                document.querySelectorAll(".draggable-word").forEach(el => el.classList.remove("selected"));
+                selectedWordInfo = null; 
+            }
+        }
+
+        function placeWord(word, qIndex) {
+            const zone = document.getElementById(`zone-${qIndex}`);
+            zone.innerText = word;
+            zone.classList.add("filled");
+            zone.dataset.value = word;
+
+            // סימון המילה כמשומשת
+            const bank = document.getElementById(`bank-${qIndex}`);
+            Array.from(bank.children).forEach(child => {
+                child.classList.remove("used"); 
+                if (child.innerText === word) {
+                    child.classList.add("used");
+                }
+            });
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                // מחיקת התשובות של העמודים שהיינו בהם כדי לאפשר מענה מחדש
+                const itemsToKeep = currentPage * itemsPerPage;
+                if (userAnswers.length > itemsToKeep) {
+                    userAnswers = userAnswers.slice(0, itemsToKeep);
+                }
+                renderPage();
+            }
+        }
+
+        function nextPage() {
+            // איסוף תשובות מהעמוד הנוכחי
+            const start = currentPage * itemsPerPage;
+            const end = Math.min(start + itemsPerPage, allSentences.length);
+
+            for (let i = start; i < end; i++) {
+                const zone = document.getElementById(`zone-${i}`);
+                const selected = zone.dataset.value || "(לא ענה)";
+                const correct = allSentences[i].correct;
+                
+                userAnswers.push({
+                    question: allSentences[i].text.replace("___", "____"),
+                    selected: selected,
+                    correct: correct,
+                    isCorrect: selected === correct
+                });
+            }
+
+            currentPage++;
+            
+            if (currentPage * itemsPerPage >= allSentences.length) {
+                endGame();
+            } else {
+                renderPage();
+            }
+        }
+
+        function endGame() {
+            document.getElementById("game-screen").classList.add("hidden");
+            document.getElementById("end-screen").classList.remove("hidden");
+            
+            const correctCount = userAnswers.filter(a => a.isCorrect).length;
+            const grade = Math.round((correctCount / allSentences.length) * 100);
+            
+            document.getElementById("final-score").innerText = grade;
+            
+            sendReport(grade, correctCount);
+        }
+
+        function sendReport(grade, correctCount) {
+            const date = new Date().toLocaleDateString("he-IL");
+            
+            // --- ניתוח פדגוגי ---
+            let mastery = "";
+            let feedback = "";
+            let nextSteps = "";
+            let color = "red";
+
+            if (grade >= 90) {
+                mastery = "מצוין - שליטה גבוהה";
+                feedback = "התלמיד מפגין הבנה עמוקה של הקשרים הלוגיים במשפט (סיבה, תוצאה, ניגוד).";
+                nextSteps = "מומלץ לתת משימות כתיבה יצירתית המשלבות מילות קישור מורכבות.";
+                color = "green";
+            } else if (grade >= 70) {
+                mastery = "טוב - נדרש דיוק";
+                feedback = "התלמיד מבין את מבנה המשפט אך לעיתים מתבלבל בין מילות קישור דומות.";
+                nextSteps = "מומלץ לתרגל את ההבדלים הדקים (כמו בין 'בגלל' ל'כי') ולבקש הסבר בעל פה.";
+                color = "orange";
+            } else {
+                mastery = "נדרש חיזוק";
+                feedback = "התלמיד מתקשה בהתאמת מילת הקישור להקשר. נדרשת עבודה על הבנת הנקרא.";
+                nextSteps = "מומלץ לחזור לבסיס: עבודה על משפטים פשוטים והמחשה של הקשרים הלוגיים.";
+                color = "red";
+            }
+
+            // בניית ה-HTML לדו"ח המייל
+            let reportHTML = `<div dir="rtl" style="font-family: Arial, sans-serif; color:#333;">`;
+            
+            // כותרת כחולה בהירה כפי שביקשת
+            reportHTML += `<div style="background-color:#81ecec; padding:15px; border-radius:8px 8px 0 0; text-align:center;">`;
+            reportHTML += `<h2 style="margin:0; color:#2d3436;">דוח מיומנות: שימוש במילות קישור</h2></div>`;
+            
+            reportHTML += `<div style="padding:20px; border:1px solid #ddd; background:#fff;">`;
+            reportHTML += `<p><strong>תלמיד:</strong> ${studentName}</p>`;
+            reportHTML += `<p><strong>תאריך:</strong> ${date}</p>`;
+            reportHTML += `<p><strong>ציון:</strong> <span style="color:${color}; font-weight:bold; font-size:1.2em;">${grade}</span> (${correctCount}/${allSentences.length})</p>`;
+            
+            reportHTML += `<div style="background:#f8f9fa; padding:15px; border-right:4px solid ${color}; margin:15px 0;">`;
+            reportHTML += `<p><strong>רמת שליטה:</strong> ${mastery}</p>`;
+            reportHTML += `<p><strong>אבחון ומסקנות:</strong> ${feedback}</p>`;
+            reportHTML += `<p><strong>המלצות להמשך:</strong> ${nextSteps}</p>`;
+            reportHTML += `</div>`;
+            
+            // פירוט שגיאות
+            const errors = userAnswers.filter(a => !a.isCorrect);
+            if (errors.length > 0) {
+                reportHTML += `<h3>פירוט שגיאות למיקוד:</h3>`;
+                errors.forEach(err => {
+                    reportHTML += `<div style="background:#fff5f5; padding:10px; margin-bottom:5px; border:1px solid #fed7d7; border-radius:5px;">`;
+                    reportHTML += `<strong>במשפט:</strong> "${err.question}"<br>`;
+                    reportHTML += `נבחר: <span style="color:red">${err.selected}</span> | נכון: <span style="color:green">${err.correct}</span>`;
+                    reportHTML += `</div>`;
+                });
+            } else {
+                reportHTML += `<p style="color:green; font-weight:bold;">כל הכבוד! ללא שגיאות.</p>`;
+            }
+            
+            reportHTML += `</div></div>`;
+
+            const params = {
+                subject: `גשר של מילים - מילות קישור - ${studentName}`,
+                student_name: studentName,
+                score: grade,
+                report_details: reportHTML
+            };
+
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, params)
+                .then(() => {
+                    document.getElementById("sending-msg").innerText = "הדוח נשלח בהצלחה למורה ✅";
+                    document.getElementById("sending-msg").style.color = "green";
+                })
+                .catch((err) => {
+                    console.error(err);
+                    document.getElementById("sending-msg").innerText = "שגיאה בשליחת הדוח ❌";
+                });
+        }
+    </script>
+</body>
+</html>
